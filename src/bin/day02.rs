@@ -26,19 +26,15 @@ fn nof_digits(mut id: u64) -> u32 {
 }
 
 fn is_invalid(id: u64, max_pattern_length: u32) -> bool {
-    let nof_digits = nof_digits(id);
+    let nof_id_digits = nof_digits(id);
 
     for pattern_length in 1..=max_pattern_length {
-        let repetitions = nof_digits / pattern_length;
-
-        if repetitions * pattern_length != nof_digits {
-            continue;
-        }
-
         let pattern = id.rem(10_u64.pow(pattern_length));
         let mut number = 0;
 
-        for _i in 0..repetitions {
+        if pattern == 0 {continue;}
+
+        while nof_digits(number) < nof_id_digits {
             number = (number * 10_u64.pow(pattern_length)) + pattern;
         }
 
@@ -75,41 +71,41 @@ fn sum_of_invalid_ids_part2(start: u64, end: u64) -> u64 {
     let start_nof_digits = nof_digits(start);
     let end_nof_digits = nof_digits(end);
 
-    for pattern_length in 1..=(start_nof_digits.max(end_nof_digits) / 2) {
-        if start_nof_digits.rem(pattern_length) != 0 && end_nof_digits.rem(pattern_length) != 0 {
-            // we cannot create a valid pattern with this length
+    let mut pattern = 1;
+
+    loop {
+        let pattern_length = nof_digits(pattern);
+
+        if is_invalid(pattern, pattern_length-1) {
+            pattern += 1;
             continue;
         }
 
-        let repetitions = start_nof_digits / pattern_length;
+        if pattern_length * 2 > end_nof_digits {
+            break;
+        }
 
-        let mut pattern = (start / 10_u64.pow(start_nof_digits - pattern_length))
-            .min(end / 10_u64.pow(end_nof_digits - pattern_length));
+        let start_prefix = (start / 10_u64.pow(start_nof_digits - pattern_length));
+        let end_prefix = (end / 10_u64.pow(end_nof_digits - pattern_length));
 
-        while nof_digits(pattern) == pattern_length {
-            let mut number = 0;
-            for _i in 0..repetitions {
-                number = (number * 10_u64.pow(pattern_length)) + pattern;
-            }
+        if pattern > start_prefix && pattern > end_prefix {
+            pattern = 10_u64.pow(pattern_length);
+            continue;
+        }
 
+        let mut number = 0;
+        while nof_digits(number) < start_nof_digits {
+            number = (number * 10_u64.pow(pattern_length)) + pattern;
+        }
+
+        while nof_digits(number) <= end_nof_digits {
             if number >= start && number <= end && !is_invalid(number, pattern_length - 1) {
                 sum += number;
             }
-
-            if number > end {
-                break;
-            }
-
-            while nof_digits(number) < end_nof_digits {
-                // try more repetitions
-                number = (number * 10_u64.pow(pattern_length)) + pattern;
-                if number >= start && number <= end && !is_invalid(number, pattern_length - 1) {
-                    sum += number;
-                }
-            }
-
-            pattern += 1;
+            number = (number * 10_u64.pow(pattern_length)) + pattern;
         }
+
+        pattern += 1;
     }
 
     sum
