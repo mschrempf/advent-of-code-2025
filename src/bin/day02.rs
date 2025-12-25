@@ -85,8 +85,8 @@ fn sum_of_invalid_ids_part2(start: u64, end: u64) -> u64 {
             break;
         }
 
-        let start_prefix = (start / 10_u64.pow(start_nof_digits - pattern_length));
-        let end_prefix = (end / 10_u64.pow(end_nof_digits - pattern_length));
+        let start_prefix = start / 10_u64.pow(start_nof_digits - pattern_length) ;
+        let end_prefix = end / 10_u64.pow(end_nof_digits - pattern_length) ;
 
         if pattern > start_prefix && pattern > end_prefix {
             pattern = 10_u64.pow(pattern_length);
