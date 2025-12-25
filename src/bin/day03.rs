@@ -1,44 +1,100 @@
 use std::io::Read;
 
-fn parse_input(input: &str) -> Vec<Vec<u8>> {
-    input.lines().map(|line|
-        line.chars().map(|c| c.to_string().parse::<u8>().expect("parsing must work")).collect()
-    ).collect()
+fn parse_input(input: &str) -> Vec<Vec<u64>> {
+    input
+        .lines()
+        .map(|line| {
+            line.chars()
+                .map(|c| c.to_string().parse::<u64>().expect("parsing must work"))
+                .collect()
+        })
+        .collect()
 }
 
-fn maximum_joltage(batteries: &[u8]) -> u8 {
-    let mut max_first_digit = batteries[0];
-    let mut max_second_digit = batteries[1];
+fn maximum_joltage(batteries: &[u64], nof_batteries: usize) -> u64 {
+    let mut max_digit_indices = [0; 12];
 
-    for (index, value) in batteries.iter().enumerate().skip(1) {
-        if (index < batteries.len() - 1) && *value > max_first_digit {
-            max_first_digit = *value;
-            max_second_digit = batteries[index+1];
-        } else if *value > max_second_digit {
-            max_second_digit = *value;
+    // fill each index
+    for digit_index in 0..nof_batteries {
+        let start_index = if digit_index > 0 {
+            max_digit_indices[digit_index - 1] + 1
+        } else {
+            0
+        };
+
+        max_digit_indices[digit_index] = start_index;
+
+        for battery_index in start_index..batteries.len() - nof_batteries + digit_index + 1 {
+            if batteries[battery_index] > batteries[max_digit_indices[digit_index]] {
+                max_digit_indices[digit_index] = battery_index;
+            }
         }
     }
 
-    10 * max_first_digit + max_second_digit
+    let mut result = 0;
+    for &d in &max_digit_indices[..nof_batteries] {
+        result = result * 10 + batteries[d];
+    }
+
+    result
 }
 
-fn part1(batteries: &[Vec<u8>]) -> u32 {
-    batteries.iter().map(|b| maximum_joltage(b) as u32).sum()
+fn part1(batteries: &[Vec<u64>]) -> u64 {
+    batteries.iter().map(|b| maximum_joltage(b, 2)).sum()
+}
+
+fn part2(batteries: &[Vec<u64>]) -> u64 {
+    batteries.iter().map(|b| maximum_joltage(b, 12)).sum()
 }
 
 fn main() {
     let mut input = String::new();
-    std::io::stdin().read_to_string(&mut input).expect("reading input must work");
+    std::io::stdin()
+        .read_to_string(&mut input)
+        .expect("reading input must work");
 
     let batteries = parse_input(&input);
 
     println!("Part 1: {}", part1(&batteries));
+    println!("Part 2: {}", part2(&batteries));
 }
 
 #[test]
 fn test_part_1() {
-    assert_eq!(maximum_joltage(&[9,8,7,6,5,4,3,2,1,1,1,1,1,1,1]), 98);
-    assert_eq!(maximum_joltage(&[8,1,1,1,1,1,1,1,1,1,1,1,1,1,9]), 89);
-    assert_eq!(maximum_joltage(&[2,3,4,2,3,4,2,3,4,2,3,4,2,7,8]), 78);
-    assert_eq!(maximum_joltage(&[8,1,8,1,8,1,9,1,1,1,1,2,1,1,1]), 92);
+    assert_eq!(
+        maximum_joltage(&[9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1, 1], 2),
+        98
+    );
+    assert_eq!(
+        maximum_joltage(&[8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9], 2),
+        89
+    );
+    assert_eq!(
+        maximum_joltage(&[2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 7, 8], 2),
+        78
+    );
+    assert_eq!(
+        maximum_joltage(&[8, 1, 8, 1, 8, 1, 9, 1, 1, 1, 1, 2, 1, 1, 1], 2),
+        92
+    );
+}
+
+#[test]
+fn test_part_2() {
+    assert_eq!(
+        maximum_joltage(&[9, 8, 7, 6, 5, 4, 3, 2, 1, 1, 1, 1, 1, 1, 1], 12),
+        987654321111
+    );
+    assert_eq!(
+        maximum_joltage(&[8, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 9], 12),
+        811111111119
+    );
+    assert_eq!(
+        maximum_joltage(&[2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 3, 4, 2, 7, 8], 12),
+        434234234278
+    );
+    assert_eq!(
+        maximum_joltage(&[8, 1, 8, 1, 8, 1, 9, 1, 1, 1, 1, 2, 1, 1, 1], 12),
+        888911112111
+    );
 }
