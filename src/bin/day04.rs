@@ -10,8 +10,8 @@ fn nof_neighbors(grid: &[Vec<u8>], row: usize, col: usize) -> usize {
 
     let mut result = 0;
 
-    for y in row.saturating_sub(1)..height.min(row+2) {
-        for x in col.saturating_sub(1)..width.min(col+2) {
+    for y in row.saturating_sub(1)..height.min(row + 2) {
+        for x in col.saturating_sub(1)..width.min(col + 2) {
             if (y != row || x != col) && grid[y][x] == b'@' {
                 result += 1;
             }
@@ -33,6 +33,29 @@ fn part1(grid: &[Vec<u8>]) -> usize {
     result
 }
 
+fn part2(mut grid: Vec<Vec<u8>>) -> usize {
+    let mut result = 0;
+
+    let mut roll_has_been_removed = true;
+
+    let width = grid[0].len();
+    let height = grid.len();
+
+    while roll_has_been_removed {
+        roll_has_been_removed = false;
+        for row in 0..height {
+            for col in 0..width {
+                if grid[row][col] == b'@' && nof_neighbors(&grid, row, col) < 4 {
+                    result += 1;
+                    roll_has_been_removed = true;
+                    grid[row][col] = b'.';
+                }
+            }
+        }
+    }
+    result
+}
+
 fn main() {
     let mut input = String::new();
     std::io::stdin()
@@ -42,6 +65,7 @@ fn main() {
     let grid = parse_input(&input);
 
     println!("Part 1: {}", part1(&grid));
+    println!("Part 2: {}", part2(grid));
 }
 
 #[test]
