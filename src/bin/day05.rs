@@ -34,22 +34,21 @@ fn part2(ranges: &[RangeInclusive<u64>]) -> u64 {
     let mut ranges = Vec::from_iter(ranges.iter().map(|r| (*r.start(), *r.end())));
     ranges.sort_by_key(|r| r.0);
 
-    let mut full_ranges = vec![ranges[0]];
+    if ranges.is_empty() {return 0;}
+
+    let mut sum = 0;
+    let mut current_range = ranges[0];
 
     for r in ranges.iter().skip(1) {
-        let last_range = full_ranges.last_mut().unwrap();
-
-        if last_range.1 >= r.0 {
-            last_range.1 = last_range.1.max(r.1);
+        if current_range.1 + 1 >= r.0 {
+            current_range.1 = current_range.1.max(r.1);
         } else {
-            full_ranges.push(*r);
+            sum += current_range.1 - current_range.0 + 1;
+            current_range = *r;
         }
     }
 
-    full_ranges
-        .iter()
-        .map(|r| r.1 - r.0 + 1)
-        .sum()
+    sum + current_range.1 - current_range.0 + 1
 }
 
 fn main() {
