@@ -34,7 +34,9 @@ fn part2(ranges: &[RangeInclusive<u64>]) -> u64 {
     let mut ranges = Vec::from_iter(ranges.iter().map(|r| (*r.start(), *r.end())));
     ranges.sort_by_key(|r| r.0);
 
-    if ranges.is_empty() {return 0;}
+    if ranges.is_empty() {
+        return 0;
+    }
 
     let mut sum = 0;
     let mut current_range = ranges[0];
