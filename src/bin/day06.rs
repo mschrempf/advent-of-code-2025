@@ -35,7 +35,7 @@ fn part1(operators: &[Vec<u64>], operands: &[char]) -> u64 {
             if operand == &'+' {
                 operators.iter().map(|o| o[idx]).sum::<u64>()
             } else {
-                operators.iter().map(|o| o[idx]).fold(1, |acc, v| acc * v)
+                operators.iter().map(|o| o[idx]).product::<u64>()
             }
         })
         .sum()
@@ -65,7 +65,7 @@ fn part2(input: &str) -> u64 {
             if current_operator == b'+' {
                 result += current_operands.iter().sum::<u64>();
             } else {
-                result += current_operands.iter().fold(1, |acc, x| acc * x);
+                result += current_operands.iter().product::<u64>();
             }
 
             current_operator = *c;
@@ -84,7 +84,7 @@ fn part2(input: &str) -> u64 {
     if current_operator == b'+' {
         result += current_operands.iter().sum::<u64>();
     } else {
-        result += current_operands.iter().fold(1, |acc, x| acc * x);
+        result += current_operands.iter().product::<u64>();
     }
 
     result

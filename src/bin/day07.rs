@@ -58,7 +58,6 @@ fn part2(splitter_positions: &[Vec<usize>]) -> u64 {
 
         for (beam, amount) in &current_beam_positions {
             if splitters.contains(beam) {
-
                 new_beam_positions.push((beam - 1, *amount));
                 new_beam_positions.push((beam + 1, *amount));
             } else {
@@ -70,7 +69,9 @@ fn part2(splitter_positions: &[Vec<usize>]) -> u64 {
         new_beam_positions.sort_unstable_by_key(|(beam, _)| *beam);
 
         for (new_beam, new_amount) in new_beam_positions {
-            if let Some((beam, amount)) = current_beam_positions.last_mut() && *beam == new_beam {
+            if let Some((beam, amount)) = current_beam_positions.last_mut()
+                && *beam == new_beam
+            {
                 *amount += new_amount;
             } else {
                 current_beam_positions.push((new_beam, new_amount));
@@ -78,9 +79,11 @@ fn part2(splitter_positions: &[Vec<usize>]) -> u64 {
         }
     }
 
-    current_beam_positions.iter().map(|(_, amount)| *amount).sum()
+    current_beam_positions
+        .iter()
+        .map(|(_, amount)| *amount)
+        .sum()
 }
-
 
 fn main() {
     let mut input = String::new();
