@@ -97,10 +97,7 @@ fn min_number_of_button_presses(m: &Machine) -> usize {
 }
 
 fn part1(machines: &[Machine]) -> usize {
-    machines
-        .iter()
-        .map(min_number_of_button_presses)
-        .sum()
+    machines.iter().map(min_number_of_button_presses).sum()
 }
 
 fn main() {
