@@ -1,6 +1,7 @@
 use std::{
     collections::HashSet,
     io::{Read, stdin},
+    time::Instant,
 };
 
 fn parse_input(input: &str) -> Vec<Vec<usize>> {
@@ -87,10 +88,28 @@ fn part2(splitter_positions: &[Vec<usize>]) -> u64 {
 
 fn main() {
     let mut input = String::new();
-    stdin().read_to_string(&mut input).unwrap();
+    std::io::stdin()
+        .read_to_string(&mut input)
+        .expect("Reading input must work");
 
+    let before_parse = Instant::now();
     let splitter_positions = parse_input(&input);
+    let parse_time = before_parse.elapsed();
 
+    let before_part1 = Instant::now();
     println!("Part 1: {}", part1(&splitter_positions));
+    let part1_time = before_part1.elapsed();
+
+    let before_part2 = Instant::now();
     println!("Part 2: {}", part2(&splitter_positions));
+    let part2_time = before_part2.elapsed();
+
+    println!("==========================================");
+    println!("Parsing: {} µs", parse_time.as_micros());
+    println!("Part 1 : {} µs", part1_time.as_micros());
+    println!("Part 2 : {} µs", part2_time.as_micros());
+    println!(
+        "Total  : {} µs",
+        parse_time.as_micros() + part1_time.as_micros() + part2_time.as_micros()
+    );
 }

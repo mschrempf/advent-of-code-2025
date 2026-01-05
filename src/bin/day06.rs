@@ -1,4 +1,7 @@
-use std::io::{Read, stdin};
+use std::{
+    io::{Read, stdin},
+    time::Instant,
+};
 
 fn parse_input(input: &str) -> (Vec<Vec<u64>>, Vec<char>) {
     let mut operators = vec![];
@@ -93,10 +96,26 @@ fn part2(input: &str) -> u64 {
 fn main() {
     let mut input = String::new();
     stdin().read_to_string(&mut input).unwrap();
+    let before_parse = Instant::now();
     let (operators, operands) = parse_input(&input);
+    let parse_time = before_parse.elapsed();
 
+    let before_part1 = Instant::now();
     println!("Part 1: {}", part1(&operators, &operands));
+    let part1_time = before_part1.elapsed();
+
+    let before_part2 = Instant::now();
     println!("Part 2: {}", part2(&input));
+    let part2_time = before_part2.elapsed();
+
+    println!("==========================================");
+    println!("Parsing: {} µs", parse_time.as_micros());
+    println!("Part 1 : {} µs", part1_time.as_micros());
+    println!("Part 2 : {} µs", part2_time.as_micros());
+    println!(
+        "Total  : {} µs",
+        parse_time.as_micros() + part1_time.as_micros() + part2_time.as_micros()
+    );
 }
 
 #[test]

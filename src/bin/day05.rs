@@ -1,4 +1,4 @@
-use std::{io::Read, ops::RangeInclusive};
+use std::{io::Read, ops::RangeInclusive, time::Instant};
 
 fn parse_input(input: &str) -> (Vec<RangeInclusive<u64>>, Vec<u64>) {
     let mut ranges = Vec::new();
@@ -58,10 +58,27 @@ fn main() {
     std::io::stdin()
         .read_to_string(&mut input)
         .expect("reading input must work");
-    let (ranges, ids) = parse_input(&input);
 
+    let before_parse = Instant::now();
+    let (ranges, ids) = parse_input(&input);
+    let parse_time = before_parse.elapsed();
+
+    let before_part1 = Instant::now();
     println!("Part 1: {}", part1(&ranges, &ids));
+    let part1_time = before_part1.elapsed();
+
+    let before_part2 = Instant::now();
     println!("Part 2: {}", part2(&ranges));
+    let part2_time = before_part2.elapsed();
+
+    println!("==========================================");
+    println!("Parsing: {} µs", parse_time.as_micros());
+    println!("Part 1 : {} µs", part1_time.as_micros());
+    println!("Part 2 : {} µs", part2_time.as_micros());
+    println!(
+        "Total  : {} µs",
+        parse_time.as_micros() + part1_time.as_micros() + part2_time.as_micros()
+    );
 }
 #[test]
 fn test_part2() {
