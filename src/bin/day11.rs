@@ -1,6 +1,7 @@
 use std::{
     collections::HashMap,
     io::{Read, stdin},
+    time::Instant,
 };
 
 fn parse_input(input: &str) -> HashMap<String, Vec<String>> {
@@ -85,10 +86,27 @@ fn main() {
     stdin()
         .read_to_string(&mut input)
         .expect("reading input must work");
-    let connections = parse_input(&input);
 
+    let before_parsing = Instant::now();
+    let connections = parse_input(&input);
+    let parse_time = before_parsing.elapsed();
+
+    let before_part1 = Instant::now();
     println!("Part 1: {}", part1(&connections));
+    let part1_time = before_part1.elapsed();
+
+    let before_part2 = Instant::now();
     println!("Part 2: {}", part2(&connections));
+    let part2_time = before_part2.elapsed();
+
+    println!("==========================================");
+    println!("Parsing: {} µs", parse_time.as_micros());
+    println!("Part 1 : {} µs", part1_time.as_micros());
+    println!("Part 2 : {} µs", part2_time.as_micros());
+    println!(
+        "Total  : {} µs",
+        parse_time.as_micros() + part1_time.as_micros() + part2_time.as_micros()
+    )
 }
 
 #[test]
